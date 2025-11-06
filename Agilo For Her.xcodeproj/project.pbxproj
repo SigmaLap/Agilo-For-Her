@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		22CFBFA62EBCC49900F20A5D /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFBFA52EBCC49900F20A5D /* RevenueCat */; };
+		22CFBFA82EBCC49900F20A5D /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFBFA72EBCC49900F20A5D /* RevenueCatUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		22DC1C6C2EBCB8BF004D0815 /* Agilo For Her.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Agilo For Her.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22CFBFA82EBCC49900F20A5D /* RevenueCatUI in Frameworks */,
+				22CFBFA62EBCC49900F20A5D /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = "Agilo For Her";
 			packageProductDependencies = (
+				22CFBFA52EBCC49900F20A5D /* RevenueCat */,
+				22CFBFA72EBCC49900F20A5D /* RevenueCatUI */,
 			);
 			productName = "Agilo For Her";
 			productReference = 22DC1C6C2EBCB8BF004D0815 /* Agilo For Her.app */;
@@ -94,6 +103,9 @@
 			);
 			mainGroup = 22DC1C632EBCB8BF004D0815;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 22DC1C6D2EBCB8BF004D0815 /* Products */;
 			projectDirPath = "";
@@ -332,6 +344,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.46.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		22CFBFA52EBCC49900F20A5D /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		22CFBFA72EBCC49900F20A5D /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 22DC1C642EBCB8BF004D0815 /* Project object */;
 }
