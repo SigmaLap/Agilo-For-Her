@@ -7,18 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22454E792EBE1A63004F5F67 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 22454E782EBE1A63004F5F67 /* GoogleSignIn */; };
+		22454E7B2EBE1A63004F5F67 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 22454E7A2EBE1A63004F5F67 /* GoogleSignInSwift */; };
 		22CFBFA62EBCC49900F20A5D /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFBFA52EBCC49900F20A5D /* RevenueCat */; };
 		22CFBFA82EBCC49900F20A5D /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFBFA72EBCC49900F20A5D /* RevenueCatUI */; };
+		22CFC1A32EBD1B3500F20A5D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFC1A22EBD1B3500F20A5D /* FirebaseAuth */; };
+		22CFC1A52EBD1B3500F20A5D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFC1A42EBD1B3500F20A5D /* FirebaseCore */; };
+		22CFC1A72EBD1B3500F20A5D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 22CFC1A62EBD1B3500F20A5D /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22454D3C2EBD26DA004F5F67 /* Agilo Mentor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Agilo Mentor.entitlements"; sourceTree = "<group>"; };
 		22DC1C6C2EBCB8BF004D0815 /* Agilo For Her.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Agilo For Her.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		22DC1C6E2EBCB8BF004D0815 /* Agilo For Her */ = {
+		22DC1C6E2EBCB8BF004D0815 /* AgiloForHer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Agilo For Her";
+			path = AgiloForHer;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -29,7 +35,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				22CFBFA82EBCC49900F20A5D /* RevenueCatUI in Frameworks */,
+				22CFC1A32EBD1B3500F20A5D /* FirebaseAuth in Frameworks */,
+				22454E7B2EBE1A63004F5F67 /* GoogleSignInSwift in Frameworks */,
+				22CFC1A52EBD1B3500F20A5D /* FirebaseCore in Frameworks */,
+				22CFC1A72EBD1B3500F20A5D /* FirebaseFirestore in Frameworks */,
 				22CFBFA62EBCC49900F20A5D /* RevenueCat in Frameworks */,
+				22454E792EBE1A63004F5F67 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,7 +50,8 @@
 		22DC1C632EBCB8BF004D0815 = {
 			isa = PBXGroup;
 			children = (
-				22DC1C6E2EBCB8BF004D0815 /* Agilo For Her */,
+				22454D3C2EBD26DA004F5F67 /* Agilo Mentor.entitlements */,
+				22DC1C6E2EBCB8BF004D0815 /* AgiloForHer */,
 				22DC1C6D2EBCB8BF004D0815 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,12 +80,17 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				22DC1C6E2EBCB8BF004D0815 /* Agilo For Her */,
+				22DC1C6E2EBCB8BF004D0815 /* AgiloForHer */,
 			);
 			name = "Agilo For Her";
 			packageProductDependencies = (
 				22CFBFA52EBCC49900F20A5D /* RevenueCat */,
 				22CFBFA72EBCC49900F20A5D /* RevenueCatUI */,
+				22CFC1A22EBD1B3500F20A5D /* FirebaseAuth */,
+				22CFC1A42EBD1B3500F20A5D /* FirebaseCore */,
+				22CFC1A62EBD1B3500F20A5D /* FirebaseFirestore */,
+				22454E782EBE1A63004F5F67 /* GoogleSignIn */,
+				22454E7A2EBE1A63004F5F67 /* GoogleSignInSwift */,
 			);
 			productName = "Agilo For Her";
 			productReference = 22DC1C6C2EBCB8BF004D0815 /* Agilo For Her.app */;
@@ -105,6 +122,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				22CFC1A12EBD1B3500F20A5D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				22454E772EBE1A63004F5F67 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 22DC1C6D2EBCB8BF004D0815 /* Products */;
@@ -263,30 +282,38 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Agilo Mentor.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VH2NKLHXDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Agilo Her";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "PPaules.com.Agilo-ADHD";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "PPaules.com.Agilo-ADHD-Mentor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -295,30 +322,38 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Agilo Mentor.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VH2NKLHXDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Agilo Her";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "PPaules.com.Agilo-ADHD";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "PPaules.com.Agilo-ADHD-Mentor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -346,6 +381,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		22454E772EBE1A63004F5F67 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm";
@@ -354,9 +397,27 @@
 				minimumVersion = 5.46.0;
 			};
 		};
+		22CFC1A12EBD1B3500F20A5D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		22454E782EBE1A63004F5F67 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22454E772EBE1A63004F5F67 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		22454E7A2EBE1A63004F5F67 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22454E772EBE1A63004F5F67 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		22CFBFA52EBCC49900F20A5D /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
@@ -366,6 +427,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 22CFBFA42EBCC49900F20A5D /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
+		};
+		22CFC1A22EBD1B3500F20A5D /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22CFC1A12EBD1B3500F20A5D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		22CFC1A42EBD1B3500F20A5D /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22CFC1A12EBD1B3500F20A5D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		22CFC1A62EBD1B3500F20A5D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22CFC1A12EBD1B3500F20A5D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
