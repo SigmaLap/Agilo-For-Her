@@ -2,7 +2,8 @@ import SwiftUI
 
 struct BacklogView: View {
  @State private var selectedFilter = "All"
- 
+ @State private var searchText = ""
+
  let filters = ["All", "High Priority", "Medium", "Low"]
  
  var body: some View {
@@ -77,6 +78,8 @@ struct BacklogView: View {
    }
    .navigationTitle("Backlog")
    .navigationBarTitleDisplayMode(.large)
+   .searchable(text: $searchText, prompt: "Search tasks, projects, notes...")
+
  }
 }
 

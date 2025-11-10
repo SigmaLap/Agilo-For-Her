@@ -22,12 +22,12 @@ struct ProgressTaskFocus: View {
      .foregroundColor(.blackPrimary)
    }
    .padding(.horizontal, 12)
-   .padding(.vertical, 6)
-   .background(Color.white)
-   .cornerRadius(16)
-   .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+   .padding(.vertical)
+   .glassEffect()
+   
    
   } else {
+  
    // Expanded view
    VStack(spacing: 8) {
     HStack(spacing: 12) {
@@ -84,17 +84,16 @@ struct ProgressTaskFocus: View {
        .frame(height: 4)
       
       Rectangle()
-       .fill(Color.primary)
+       .fill(Color.blackText)
        .frame(width: geometry.size.width * progress, height: 4)
        .animation(.linear, value: progress)
      }
     }
-    .frame(height: 4)
+    .frame(height: 10)
     .padding(.horizontal, 16)
     .padding(.bottom, 12)
    }
-   .background(Color.white)
-   .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -2)
+   .glassEffect()
   }
  }
 }

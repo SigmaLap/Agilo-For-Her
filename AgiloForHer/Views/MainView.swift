@@ -2,38 +2,62 @@ import SwiftUI
 import Foundation
 
 struct MainView: View {
+
+ var todayNumberSymbol: String {
+  let day = Calendar.autoupdatingCurrent.component(.day, from: Date())
+  return "\(day).calendar"
+ }
  
  var body: some View {
    TabView {
-    Tab("Home", systemImage: "house.fill") {
-     HomeView()
-    }
 
-    Tab("Backlog", systemImage: "list.bullet") {
-     BacklogView()
-    }
-
-    Tab("Focus", systemImage: "timer") {
-     FocusView()
-    }
-
-    Tab("Me", systemImage: "person.fill") {
-     MeView()
-    }
-    
-    Tab(role: .search){
-     NavigationStack {
-      SearchTabContent()
+    Tab("To-do", systemImage: "checkmark") {
+     NavigationStack{
+      HomeView()
      }
     }
-   }
-   .tabBarMinimizeBehavior(.onScrollDown)
-//   .tabViewBottomAccessory {
-//    ProgressTaskFocus()
-//   }
-  
-  .navigationBarBackButtonHidden()
+    
+    Tab("Today", systemImage: todayNumberSymbol) {
+     NavigationStack{
+      CycleView()
+     }
+    }
+    
+   
+    Tab {
+     NavigationStack{
+      FocusView()
+     }
+    } label: {
+     Label {
+      Text("Focus")
+     } icon: {
+      Image(systemName: "circle.circle", variableValue: 0.5)
+     }
+    }
+    
+   
+   
+    
+    Tab("Me", systemImage: "mouth") {
+     NavigationStack{
+      MeView()
+     }
+    }
 
+    Tab(role: .search){
+     NavigationStack{
+      BacklogView()
+     }
+    }
+    
+   }
+//   .tabViewBottomAccessory {
+//    NavigationStack{
+//     ProgressTaskFocus()
+//    }
+//   }
+   .tabBarMinimizeBehavior(.onScrollDown)
  }
 }
 #Preview {

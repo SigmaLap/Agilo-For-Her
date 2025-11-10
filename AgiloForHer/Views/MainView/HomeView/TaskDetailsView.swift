@@ -3,13 +3,14 @@ import SwiftUI
 struct TaskDetailsView: View {
  @Binding var isPresented: Bool
  let taskText: String
-
+ 
  @State private var selectedTimeOfDay = "To-do"
  @State private var duration = "30m"
  @State private var subTasks: [String] = []
  @State private var notes = ""
  @State private var showSuggestBreakdown = false
-
+ @State private var sliderValue: Double = 0
+ 
  var body: some View {
   NavigationStack{
    ZStack {
@@ -65,22 +66,27 @@ struct TaskDetailsView: View {
        
        // Time of day
        VStack(alignment: .leading, spacing: 12) {
-        HStack {
-         Text("Time of day")
-          .font(.system(size: 16, weight: .semibold))
-          .foregroundColor(.blackPrimary)
-         
-         Spacer()
-         
-         Menu(selectedTimeOfDay) {
-          Button("To-do") { selectedTimeOfDay = "To-do" }
-          Button("Morning") { selectedTimeOfDay = "Morning" }
-          Button("Afternoon") { selectedTimeOfDay = "Afternoon" }
-          Button("Evening") { selectedTimeOfDay = "Evening" }
-         }
+        Text("Time of day")
          .font(.system(size: 16, weight: .semibold))
          .foregroundColor(.blackPrimary)
+
+        Slider(value: $sliderValue, in: 0...1, step: 0.25) {
+         Text("Time of day")
+        } minimumValueLabel: {
+         Image(systemName: "sun.horizon.fill")
+        } maximumValueLabel: {
+         Image(systemName: "moon.stars.fill")
         }
+        .onChange(of: sliderValue) { _, newValue in
+         let timeOfDays = ["Morning", "Afternoon", "Evening", "Night", "Late Night"]
+         let index = min(Int(round(newValue * 4)), 4)
+         selectedTimeOfDay = timeOfDays[index]
+        }
+
+        Text(selectedTimeOfDay)
+         .font(.system(size: 16, weight: .semibold))
+         .foregroundColor(.myPurple)
+         .frame(maxWidth: .infinity, alignment: .center)
        }
        .padding(.horizontal, 20)
        
@@ -97,10 +103,15 @@ struct TaskDetailsView: View {
          Spacer()
          
          Menu(duration) {
-          Button("15m") { duration = "15m" }
-          Button("30m") { duration = "30m" }
-          Button("1h") { duration = "1h" }
-          Button("2h") { duration = "2h" }
+          Section{
+           Button("15m") { duration = "15m" }
+           Button("30m") { duration = "30m" }
+           Button("1h") { duration = "1h" }
+           Button("2h") { duration = "2h" }
+          }
+          Section{
+           Button("All Day") { duration = "24h" }
+          }
          }
          .font(.system(size: 16, weight: .semibold))
          .foregroundColor(.blackPrimary)
@@ -127,12 +138,10 @@ struct TaskDetailsView: View {
            Image(systemName: "list.clipboard")
           }
           .foregroundColor(.blackPrimary)
-          .padding(.horizontal, 12)
-          .padding(.vertical, 8)
-          .background(Color.white)
-          .cornerRadius(8)
+          .padding(5)
          }
         }
+        .buttonStyle(.glass)
         
         HStack {
          Text("ADD NEW")
@@ -181,28 +190,36 @@ struct TaskDetailsView: View {
        // Add button at bottom
        Button(action: {}) {
         Image(systemName: "plus")
-         .font(.system(size: 24, weight: .semibold))
-         .foregroundColor(.blackPrimary)
-         .frame(width: 56, height: 56)
-         .background(Color.white)
-         .clipShape(Circle())
+         .font(.title.bold())
+         .padding(2)
+//         .foregroundColor(.blackPrimary)
+//         .frame(width: 56, height: 56)
+//         .background(Color.white)
+//         .clipShape(Circle())
        }
+       .buttonStyle(.borderedProminent)
+       .tint(.myGreen)
        .padding(.vertical, 20)
       }
       .padding(.vertical, 16)
      }
     }
    }
-//   .toolbar {
-//    Button()
-//     .confirmationDialog("Delete?", isPresented: $PresentDialog){
-//      
-//     }
-//   }
+   //   .toolbar {
+   //    Button()
+   //     .confirmationDialog("Delete?", isPresented: $PresentDialog){
+   //
+   //     }
+   //   }
   }
  }
 }
 
-#Preview {
+#Preview("Default") {
  TaskDetailsView(isPresented: .constant(true), taskText: "Make a cake")
+}
+
+#Preview("Long title • Dark Mode") {
+ TaskDetailsView(isPresented: .constant(true), taskText: "Bake a triple-layer chocolate cake with ganache and decorations")
+  .environment(\.colorScheme, .dark)
 }

@@ -10,216 +10,189 @@ struct FocusView: View {
  let durations = [15, 25, 45, 60]
  
  var body: some View {
-  ZStack {
-    Color.background
-     .ignoresSafeArea()
-    
-    ScrollView {
-     VStack(spacing: 40) {
-      // Timer Display
-      VStack(spacing: 20) {
-       Text("Focus Session")
-        .font(.title2.bold())
-        .foregroundColor(.blackPrimary)
-
-       // Circular Timer
-       ZStack {
-        Circle()
-         .stroke(Color.textSecondary.opacity(0.2), lineWidth: 12)
-         .frame(width: 280, height: 280)
-
-        Circle()
-         .trim(from: 0, to: progress)
-         .stroke(
-          Color.primary,
-          style: StrokeStyle(lineWidth: 12, lineCap: .round)
-         )
-         .frame(width: 280, height: 280)
-         .rotationEffect(.degrees(-90))
-         .animation(.linear, value: progress)
-
-        VStack(spacing: 8) {
-         Text("\(String(format: "%02d:%02d", timerMinutes, timerSeconds))")
-          .font(.system(size: 56, weight: .bold))
-          .foregroundColor(.blackPrimary)
-
-         Text(isRunning ? "Focusing..." : "Ready to focus")
-          .font(.subheadline)
-          .foregroundColor(.textSecondary)
-        }
-       }
-      }
-      .padding(.top, 40)
-
-      // Duration Selector
-      VStack(spacing: 16) {
-       Text("Duration")
-        .font(.headline)
-        .foregroundColor(.blackPrimary)
-
-       HStack(spacing: 16) {
-        ForEach(durations, id: \.self) { duration in
-         DurationButton(
-          minutes: duration,
-          isSelected: selectedDuration == duration
-         ) {
-          selectedDuration = duration
-          timerMinutes = duration
-          timerSeconds = 0
-          progress = 0
-          isRunning = false
-         }
-        }
-       }
-      }
-      .padding(.horizontal)
-
-      // Control Buttons
-      HStack(spacing: 24) {
-       Button(action: {
-        timerMinutes = selectedDuration
-        timerSeconds = 0
-        progress = 0
-        isRunning = false
-       }) {
-        Image(systemName: "arrow.clockwise")
-         .font(.title2)
-         .foregroundColor(.textSecondary)
-         .frame(width: 60, height: 60)
-         .background(Color.white)
-         .cornerRadius(30)
-         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-       }
-
-       Button(action: {
-        isRunning.toggle()
-        // Dummy progress update for demo
-        if isRunning {
-         // Simulate progress increasing (dummy behavior)
-        }
-       }) {
-        HStack(spacing: 12) {
-         Image(systemName: isRunning ? "pause.fill" : "play.fill")
-          .font(.title2)
-         Text(isRunning ? "Pause" : "Start")
-          .font(.headline)
-        }
-        .foregroundColor(.white)
-        .frame(width: 140, height: 60)
-        .background(Color.primary)
-        .cornerRadius(30)
-        .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 6)
-       }
-
-       Button(action: {
-        isRunning = false
-        progress = 0
-        timerMinutes = selectedDuration
-        timerSeconds = 0
-       }) {
-        Image(systemName: "stop.fill")
-         .font(.title2)
-         .foregroundColor(.textSecondary)
-         .frame(width: 60, height: 60)
-         .background(Color.white)
-         .cornerRadius(30)
-         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-       }
-      }
-      .padding(.horizontal)
-
-      // Today's Stats
-      VStack(spacing: 16) {
-       Text("Today's Focus")
-        .font(.headline)
-        .foregroundColor(.blackPrimary)
-
-       HStack(spacing: 24) {
-        StatItem(
-         value: "3h 45m",
-         label: "Focused",
-         icon: "clock.fill",
-         color: .myGreen
-        )
-
-        StatItem(
-         value: "8",
-         label: "Sessions",
-         icon: "checkmark.circle.fill",
-         color: .myPurple
-        )
-
-        StatItem(
-         value: "92%",
-         label: "Success",
-         icon: "star.fill",
-         color: .softSalmon
-        )
-       }
-      }
-      .padding()
-      .background(Color.white)
-      .cornerRadius(20)
-      .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-      .padding(.horizontal)
-      .padding(.bottom, 30)
+  
+  ScrollView {
+   VStack(spacing: 40) {
+    // Timer Display
+    VStack(spacing: 20) {
+     Text("Focus")
+      .font(.largeTitle.bold())
+      .foregroundColor(.blackPrimary)
+      .fontDesign(.rounded)
+      .padding(.bottom, 21)
+     
+     // Circular Timer
+     ZStack{
+      CircularTimer()
      }
     }
+    .padding(.top, 48)
+    
+    // Control Buttons
+    HStack() {
+     Button(action: {
+      isRunning.toggle()
+      // Dummy progress update for demo
+      if isRunning {
+       // Simulate progress increasing (dummy behavior)
+      }
+     }) {
+      HStack(spacing: 12) {
+       Image(systemName: isRunning ? "pause.fill" : "play.fill")
+        .font(.title2)
+       Text(isRunning ? "Pause" : "Start")
+        .font(.headline)
+        .fontDesign(.rounded)
+      }
+      .foregroundStyle(.primary)
+      .padding(.horizontal, 24)
+      .padding(10)
+     }
+     .buttonStyle(.glass)
+    }
+    .padding(.horizontal)
+    .padding(.top,4)
    }
-   .navigationTitle("Focus")
-   .navigationBarTitleDisplayMode(.large)
-  }
- }
-
-
-// MARK: - Duration Button
-struct DurationButton: View {
- let minutes: Int
- let isSelected: Bool
- let action: () -> Void
- 
- var body: some View {
-  Button(action: action) {
-   Text("\(minutes)m")
-    .font(.headline)
-    .foregroundColor(isSelected ? .white : .blackPrimary)
-    .frame(width: 70, height: 50)
-    .background(isSelected ? Color.primary : Color.white)
-    .cornerRadius(12)
-    .overlay(
-     RoundedRectangle(cornerRadius: 12)
-      .stroke(isSelected ? Color.clear : Color.textSecondary.opacity(0.2), lineWidth: 1)
-    )
   }
  }
 }
 
-// MARK: - Stat Item
-struct StatItem: View {
- let value: String
- let label: String
- let icon: String
- let color: Color
- 
- var body: some View {
-  VStack(spacing: 8) {
-   Image(systemName: icon)
-    .font(.title3)
-    .foregroundColor(color)
-   
-   Text(value)
-    .font(.title3.bold())
-    .foregroundColor(.blackPrimary)
-   
-   Text(label)
-    .font(.caption)
-    .foregroundColor(.textSecondary)
-  }
-  .frame(maxWidth: .infinity)
- }
-}
 
 #Preview {
  FocusView()
 }
 
+
+struct CircularTimer: View {
+ @State private var progress: CGFloat = 22.0 / 60.0
+ private let totalMinutes: CGFloat = 60
+ private let size: CGFloat = 280
+ private let ringWidth: CGFloat = 35
+ 
+ // For minute-based haptics
+ @State private var minuteForHaptics: Int = 22
+ 
+ var body: some View {
+  ZStack {
+   // Track ring
+   Circle()
+    .stroke(Color.softSalmon.opacity(0.18), lineWidth: ringWidth)
+    .frame(width: size, height: size)
+   
+   GeometryReader { geo in
+    let frame = min(geo.size.width, geo.size.height)
+    let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
+    
+    ZStack {
+     // Outer progress arc
+     Circle()
+      .trim(from: 0, to: progress)
+      .stroke(
+       Color.softSalmon,
+       style: StrokeStyle(lineWidth: ringWidth, lineCap: .round)
+      )
+      .frame(width: frame, height: frame)
+      .rotationEffect(.degrees(-90))
+      .animation(.linear(duration: 0.12), value: progress)
+     // Inner dashed indicator arc
+     Circle()
+      .trim(from: 0, to: progress)
+      .stroke(
+       Color.textSecondary.opacity(0.2),
+       style: StrokeStyle(
+        lineWidth: 10,
+        lineCap: .butt,
+        dash: [2, 4],     // dash length, gap
+        dashPhase: 0
+       )
+      )
+      .rotationEffect(.degrees(-90))
+     
+    }
+//    .contentShape(Rectangle()) // full-surface dragging
+    .gesture(
+     DragGesture(minimumDistance: 0)
+      .onChanged { value in
+       // Map drag to angle around center
+       let v = CGVector(dx: value.location.x - center.x,
+                        dy: value.location.y - center.y)
+       var theta = atan2(v.dy, v.dx) + .pi / 2
+       if theta < 0 { theta += 2 * .pi }
+       var newProgress = theta / (2 * .pi)
+       newProgress = min(max(newProgress, 0), 1)
+       progress = newProgress
+       
+       // Minute rounding for haptics
+       let minute = Int(round(progress * totalMinutes))
+       if minute != minuteForHaptics {
+        minuteForHaptics = minute
+        playLegacyHaptic() // fallback for < iOS 17
+       }
+      }
+    )
+   }
+   .frame(width: size, height: size)
+   
+   // Center labels (dummy)
+   ZStack {
+    VStack(spacing: 6) {
+     Text("\(Int(round(progress * totalMinutes)))")
+      .font(.system(size: 48, weight: .bold, design: .rounded))
+     Text("MINS")
+      .font(.title3.weight(.bold))
+      .fontDesign(.rounded)
+    }
+    
+    VStack {
+     Text("60")
+     Spacer()
+     Text("30")
+    }
+    .foregroundStyle(.secondary)
+    .font(.headline.bold())
+    .fontDesign(.rounded)
+
+    HStack {
+     Text("45")
+     Spacer()
+     Text("15")
+    }
+    .foregroundStyle(.secondary)
+    .font(.headline.bold())
+    .fontDesign(.rounded)
+
+   }
+   .frame(width: 218, height: 218)
+  }
+  .frame(width: size, height: size)
+  // iOS 17+ haptics (fires when minuteForHaptics changes)
+  .modifier(SensoryFeedbackModifier(trigger: minuteForHaptics))
+  .padding(25)
+ }
+ 
+ // MARK: - Legacy haptics (for < iOS 17)
+ private func playLegacyHaptic() {
+  if #available(iOS 17, *) {
+   // Prefer the sensoryFeedback modifier path above
+  } else {
+   let generator = UIImpactFeedbackGenerator(style: .light)
+   generator.impactOccurred()
+  }
+ }
+}
+
+// Wrap sensoryFeedback so it compiles on older SDKs
+struct SensoryFeedbackModifier: ViewModifier {
+ var trigger: Int
+ func body(content: Content) -> some View {
+  if #available(iOS 17, *) {
+   content.sensoryFeedback(.selection, trigger: trigger)
+  } else {
+   content
+  }
+ }
+}
+
+private extension CGFloat {
+ var deg: CGFloat { self * 180 / .pi }
+}

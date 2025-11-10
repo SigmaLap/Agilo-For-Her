@@ -16,7 +16,8 @@
       "Bash(log show --predicate 'eventMessage contains \"\"\"\"Agilo\"\"\"\"' --last 1m)",
       "Bash(log show --predicate 'process == \"\"\"\"Agilo For Her\"\"\"\"' --last 1m)",
       "Bash(timeout 10 xcodebuild:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(open:*)"
     ],
     "deny": [],
     "ask": []
