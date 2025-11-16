@@ -4,12 +4,37 @@ struct HomeView: View {
  @State private var showQuickAdd = false
  @State private var quickAddText = ""
  @State private var showCreationConfetti = false
+ @State private var showEnergyInput = false
+ @State private var showEnergyWarning = false
+ @State private var energyInputValue: String = ""
  @FocusState private var isInputFocused: Bool
- @EnvironmentObject var taskManager: TaskManager
+ @Environment(\.taskManager) var taskManager
+
  var formattedDate: String {
   let dateFormatter = DateFormatter()
   dateFormatter.dateFormat = "dd MMM"
   return dateFormatter.string(from: Date())
+ }
+
+ // Get top 3 tasks
+ var topThreeTasks: [Task] {
+  Array(taskManager.tasks.prefix(3))
+ }
+
+ // Calculate task completion percentage (out of 3)
+ var taskCompletionPercentage: Double {
+  let completedTasks = topThreeTasks.filter { $0.isCompleted }.count
+  return Double(completedTasks) / 3.0 * 100
+ }
+
+ // Calculate energy percentage (energy spent / ceiling)
+ var energyPercentage: Double {
+  let totalEnergySpent = topThreeTasks
+   .filter { $0.isCompleted }
+   .reduce(0) { $0 + $1.energyCost }
+
+  guard taskManager.dailyEnergyCeiling > 0 else { return 0 }
+  return Double(totalEnergySpent) / Double(taskManager.dailyEnergyCeiling) * 100
  }
  
  var body: some View {
@@ -39,22 +64,56 @@ struct HomeView: View {
     
     
     ZStack{
-     
-     
      Text("\(formattedDate)")
       .fontDesign(.serif)
       .font(.title3)
       .foregroundStyle(Color.textSecondary)
-   
-     ActivityRings(lineWidth: 34, backgroundColor: Color.accent.opacity(0.1), foregroundColor: Color.accent.opacity(0.7), percentage: 65, percent: 75, startAngle: -96, adjustedSympol: "shippingbox", iconSize: 20)
+
+     // Task completion ring (outer)
+     ActivityRings(
+      lineWidth: 34,
+      backgroundColor: Color.accent.opacity(0.1),
+      foregroundColor: Color.accent.opacity(0.7),
+      percentage: taskCompletionPercentage,
+      percent: 100,
+      startAngle: -96,
+      adjustedSympol: "shippingbox",
+      iconSize: 20
+     )
       .frame(width: 279, height: 349)
-     
-     ActivityRings(lineWidth: 29, backgroundColor: Color.cyan.opacity(0.1), foregroundColor: Color.cyan.opacity(0.7), percentage: 45, percent: 75, startAngle: -97, adjustedSympol: "arrow.forward.to.line", iconSize: 18)
+
+     // Energy level ring (inner) with input button
+     ZStack {
+      ActivityRings(
+       lineWidth: 29,
+       backgroundColor: Color.cyan.opacity(0.1),
+       foregroundColor: Color.cyan.opacity(0.7),
+       percentage: energyPercentage,
+       percent: 100,
+       startAngle: -97,
+       adjustedSympol: "arrow.forward.to.line",
+       iconSize: 18
+      )
+
+      // Energy input button
+      if !taskManager.isEnergySetForToday() {
+       Button(action: { showEnergyInput = true }) {
+        VStack(spacing: 4) {
+         Image(systemName: "bolt.fill")
+          .font(.title3)
+         Text("Set Energy")
+          .font(.caption2)
+          .fontWeight(.semibold)
+        }
+        .foregroundColor(.white)
+        .frame(width: 60, height: 60)
+        .background(Color.cyan.opacity(0.8))
+        .clipShape(Circle())
+        .shadow(color: Color.cyan.opacity(0.5), radius: 8)
+       }
+      }
+     }
       .frame(width: 207, height: 207)
-     
-//     ActivityRings(lineWidth: 26, backgroundColor: Color.orange.opacity(0.1), foregroundColor: Color.orange.opacity(0.7), percentage: 82, percent: 75, startAngle: -99, adjustedSympol: "arrow.triangle.capsulepath", iconSize: 17)
-//      .frame(width: 145, height: 145)
-     
     }
      
     
@@ -64,19 +123,19 @@ struct HomeView: View {
      TaskCircleView(
       color: .orange,
       icon: "arrow.triangle.capsulepath",
-      title: "Energy Level",
-      value: "5/20",
-      percentage: 25
+      title: "Energy Used",
+      value: "\(Int(energyPercentage))%",
+      percentage: min(energyPercentage, 100)
      )
-     
+
      Spacer()
-     
+
      TaskCircleView(
       color: .cyan,
       icon: "arrow.forward.to.line",
-      title: "Sprint Days",
-      value: "3/14",
-      percentage: 21
+      title: "Tasks Done",
+      value: "\(topThreeTasks.filter { $0.isCompleted }.count)/3",
+      percentage: taskCompletionPercentage
      )
     }
     .padding(.horizontal, 50)
@@ -85,16 +144,22 @@ struct HomeView: View {
     
     
 
-    // Display Added Tasks
-    if !taskManager.tasks.isEmpty {
+    // Display Top 3 Tasks
+    if !topThreeTasks.isEmpty {
      VStack(alignment: .leading, spacing: 12) {
-      Text("Your Tasks")
+      Text("Top 3")
        .font(.headline)
        .foregroundColor(.blackPrimary)
        .padding(.horizontal)
 
-      ForEach($taskManager.tasks) { $task in
-       TaskCard(task: $task)
+      ForEach(Array(taskManager.tasks.enumerated()), id: \.element.id) { index, _ in
+       if index < 3 {
+        TaskCardWithEnergyCheck(
+         taskIndex: index,
+         taskManager: taskManager,
+         showEnergyWarning: $showEnergyWarning
+        )
+       }
       }
      }
      .padding(.horizontal)
@@ -173,6 +238,21 @@ struct HomeView: View {
    if showCreationConfetti {
     ConfettiView()
    }
+  }
+  .sheet(isPresented: $showEnergyInput) {
+   EnergyInputSheet(
+    isPresented: $showEnergyInput,
+    energyValue: $energyInputValue,
+    taskManager: taskManager
+   )
+  }
+  .alert("Set Energy First", isPresented: $showEnergyWarning) {
+   Button("Set Energy Now") {
+    showEnergyInput = true
+   }
+   Button("Later", role: .cancel) { }
+  } message: {
+   Text("Please set your daily energy level before marking tasks as complete. This helps track your daily capacity!")
   }
  }
  
@@ -618,6 +698,131 @@ struct TaskCircleView: View {
     Text(value)
      .font(.headline)
      .foregroundStyle(color)
+   }
+  }
+ }
+}
+
+// MARK: - Task Card with Energy Check
+struct TaskCardWithEnergyCheck: View {
+ let taskIndex: Int
+ @Bindable var taskManager: TaskManager
+ @Binding var showEnergyWarning: Bool
+
+ var body: some View {
+  ZStack {
+   if taskIndex < taskManager.tasks.count {
+    TaskCard(task: $taskManager.tasks[taskIndex])
+   }
+  }
+  .onChange(of: taskManager.tasks[safe: taskIndex]?.isCompleted ?? false) { _, isCompleted in
+   // Check if energy is not set when task is completed
+   if isCompleted && !taskManager.isEnergySetForToday() {
+    showEnergyWarning = true
+    if taskIndex < taskManager.tasks.count {
+     taskManager.tasks[taskIndex].isCompleted = false
+    }
+   }
+  }
+ }
+}
+
+// Safe array access extension
+extension Array {
+ subscript(safe index: Int) -> Element? {
+  indices.contains(index) ? self[index] : nil
+ }
+}
+
+// MARK: - Energy Input Sheet
+struct EnergyInputSheet: View {
+ @Binding var isPresented: Bool
+ @Binding var energyValue: String
+ var taskManager: TaskManager
+ @State private var selectedEnergy: Int = 100
+ @Environment(\.dismiss) private var dismiss
+
+ var body: some View {
+  NavigationStack {
+   VStack(spacing: 24) {
+    VStack(spacing: 16) {
+     Text("How much energy do you have today?")
+      .font(.title2)
+      .fontWeight(.bold)
+      .foregroundColor(.blackPrimary)
+
+     Text("Set your daily energy ceiling to help us track your productivity.")
+      .font(.body)
+      .foregroundColor(.textSecondary)
+    }
+    .padding(.horizontal)
+    .padding(.top, 20)
+
+    VStack(spacing: 20) {
+     VStack(spacing: 12) {
+      Text("\(selectedEnergy)")
+       .font(.system(size: 64, weight: .ultraLight))
+       .fontDesign(.serif)
+       .foregroundColor(.myPurple)
+
+      Text("Energy Points")
+       .font(.caption)
+       .foregroundColor(.textSecondary)
+     }
+
+     Slider(value: Binding(
+      get: { Double(selectedEnergy) },
+      set: { selectedEnergy = Int($0) }
+     ), in: 25...500, step: 5)
+      .accentColor(.myPurple)
+      .padding(.horizontal)
+
+     HStack {
+      Text("25")
+       .font(.caption)
+       .foregroundColor(.textSecondary)
+      Spacer()
+      Text("500")
+       .font(.caption)
+       .foregroundColor(.textSecondary)
+     }
+     .padding(.horizontal)
+    }
+    .padding(20)
+    .background(Color.gray.opacity(0.05))
+    .cornerRadius(16)
+    .padding(.horizontal)
+
+    Spacer()
+
+    Button(action: {
+     taskManager.setDailyEnergy(selectedEnergy)
+     isPresented = false
+    }) {
+     HStack(spacing: 8) {
+      Image(systemName: "bolt.fill")
+      Text("Set Energy")
+       .bold()
+     }
+     .frame(maxWidth: .infinity)
+     .padding(.vertical, 14)
+     .foregroundColor(.white)
+     .background(Color.myPurple)
+     .cornerRadius(12)
+    }
+    .padding(.horizontal)
+    .padding(.bottom, 20)
+   }
+   .navigationTitle("Daily Energy")
+   .navigationBarTitleDisplayMode(.inline)
+   .toolbar {
+    ToolbarItem(placement: .topBarLeading) {
+     Button(role: .cancel) {
+      dismiss()
+     } label: {
+      Text("Cancel")
+     }
+    }
    }
   }
  }

@@ -3,7 +3,7 @@ import SwiftUI
 struct BacklogView: View {
  @State private var selectedFilter = "All"
  @State private var searchText = ""
- @EnvironmentObject var taskManager: TaskManager
+ @Environment(\.taskManager) var taskManager
 
  let filters = ["All", "High Priority", "Medium", "Low"]
  
@@ -47,8 +47,8 @@ struct BacklogView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 60)
        } else {
-        ForEach($taskManager.tasks) { $task in
-         BacklogTaskItem(task: $task)
+        ForEach(taskManager.tasks) { task in
+         BacklogTaskItem(task: task, taskManager: taskManager)
         }
        }
       }
@@ -176,7 +176,8 @@ struct BacklogItem: View {
 
 // MARK: - Backlog Task Item
 struct BacklogTaskItem: View {
- @Binding var task: Task
+ let task: Task
+ let taskManager: TaskManager
  @State private var showConfetti: Bool = false
 
  var body: some View {
@@ -186,12 +187,10 @@ struct BacklogTaskItem: View {
      // Completion Button
      Button(action: {
       withAnimation(.easeInOut(duration: 0.3)) {
-       task.isCompleted.toggle()
-       if task.isCompleted {
-        showConfetti = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-         showConfetti = false
-        }
+       taskManager.toggleTaskCompletion(task)
+       showConfetti = true
+       DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+        showConfetti = false
        }
       }
      }) {

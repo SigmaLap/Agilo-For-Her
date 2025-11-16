@@ -8,6 +8,7 @@ struct Task: Identifiable {
  var isCompleted: Bool = false
  var taskColor: String = "purple" // Color name as string
  var taskSymbol: String = "checkmark" // SF Symbol name
+ var energyCost: Int = 25 // Energy cost to complete this task
 
  init(title: String) {
   self.title = title

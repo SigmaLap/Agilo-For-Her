@@ -2,13 +2,13 @@ import SwiftUI
 import Foundation
 
 struct MainView: View {
- @StateObject private var taskManager = TaskManager()
+ @State private var taskManager = TaskManager()
 
  var todayNumberSymbol: String {
   let day = Calendar.autoupdatingCurrent.component(.day, from: Date())
   return "\(day).calendar"
  }
- 
+
  var body: some View {
    TabView {
 
@@ -17,14 +17,14 @@ struct MainView: View {
       HomeView()
      }
     }
-    
+
 //    Tab("Today", systemImage: todayNumberSymbol) {
 //     NavigationStack{
 //      TodayView()
 //     }
 //    }
-    
-   
+
+
     Tab {
      NavigationStack{
       FocusView()
@@ -36,7 +36,7 @@ struct MainView: View {
       Image(systemName: "circle.circle", variableValue: 0.5)
      }
     }
-    
+
 //    Tab("Me", systemImage: "mouth") {
 //     NavigationStack{
 //      MeView()
@@ -48,7 +48,7 @@ struct MainView: View {
       BacklogView()
      }
     }
-    
+
    }
 //   .tabViewBottomAccessory {
 //    NavigationStack{
@@ -56,7 +56,7 @@ struct MainView: View {
 //    }
 //   }
    .tabBarMinimizeBehavior(.onScrollDown)
-   .environmentObject(taskManager)
+   .environment(\.taskManager, taskManager)
  }
 }
 #Preview {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TaskDetailsView: View {
- @EnvironmentObject var taskManager: TaskManager
+ @Environment(\.taskManager) var taskManager
  @State private var taskTitle = ""
  @State private var taskColor: String = "purple"
  @State private var taskSymbol: String = "checkmark"
@@ -575,11 +575,11 @@ struct TaskDetailsView: View {
 
 #Preview("Default") {
  TaskDetailsView(isPresented: .constant(true), taskText: "Make a cake")
-  .environmentObject(TaskManager())
+  .environment(\.taskManager, TaskManager())
 }
 
 #Preview("Long title • Dark Mode") {
  TaskDetailsView(isPresented: .constant(true), taskText: "Bake a triple-layer chocolate cake with ganache and decorations")
-  .environmentObject(TaskManager())
+  .environment(\.taskManager, TaskManager())
   .environment(\.colorScheme, .dark)
 }
