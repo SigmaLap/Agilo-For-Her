@@ -20,7 +20,8 @@
       "Bash(open:*)",
       "Bash(timeout 60 xcodebuild:*)",
       "Bash(tree:*)",
-      "Bash(timeout 120 xcodebuild build:*)"
+      "Bash(timeout 120 xcodebuild build:*)",
+      "Bash(cd /Users/pavlypaules/Library/Mobile Documents/com~apple~CloudDocs/Developer/My Apps/Agilo Mentor:*)"
     ],
     "deny": [],
     "ask": []

@@ -80,6 +80,8 @@ final class TaskManager {
   }
  }
 
+ 
+ 
  /// Toggle task completion status
  func toggleTaskCompletion(_ task: Task) {
   guard let context = modelContext else { return }
@@ -161,7 +163,12 @@ final class TaskManager {
 
  /// Get Color value for a task based on its color string
  func getTaskColor(for task: Task) -> Color {
-  switch task.taskColor {
+  getColorValue(task.taskColor)
+ }
+
+ /// Get Color value from a color string
+ func getColorValue(_ colorName: String) -> Color {
+  switch colorName {
   case "purple": return .myPurple
   case "orange": return .orange
   case "blue": return .blue
@@ -197,6 +204,76 @@ final class TaskManager {
  func validateSubTasks(_ subTasks: [SubTask], fitsIn parentEnergy: Int) -> Bool {
   let totalEnergy = getTotalSubTasksEnergyCost(subTasks)
   return totalEnergy <= parentEnergy
+ }
+
+ // MARK: - Task Creation Helpers
+
+ /// Create a new subtask with default energy based on remaining budget
+ func createNewSubTask(forTaskEnergy taskEnergy: Int, currentSubTasks: [SubTask]) -> SubTask? {
+  let remaining = getRemainingEnergyForSubTasks(taskEnergy: taskEnergy, currentSubTasks: currentSubTasks)
+  guard remaining > 0 else { return nil }
+
+  return SubTask(
+   title: "",
+   isCompleted: false,
+   energyCost: min(5, remaining)
+  )
+ }
+
+ /// Check if a subtask energy update would exceed budget
+ func canUpdateSubTaskEnergy(
+  currentEnergy: Int,
+  newEnergy: Int,
+  taskEnergy: Int,
+  otherSubTasks: [SubTask]
+ ) -> Bool {
+  let difference = newEnergy - currentEnergy
+  let otherEnergy = getTotalSubTasksEnergyCost(otherSubTasks)
+  return (otherEnergy + newEnergy) <= taskEnergy
+ }
+
+ /// Create and save a new task with validation
+ /// Returns true if successful, false if validation fails
+ func createAndAddTask(
+  title: String,
+  color: String,
+  symbol: String,
+  energyCost: Int,
+  subTasks: [SubTask]
+ ) -> Bool {
+  guard let context = modelContext else { return false }
+
+  // Validate title is not empty
+  let trimmedTitle = title.trimmingCharacters(in: .whitespaces)
+  guard !trimmedTitle.isEmpty else {
+   print("Error: Task title cannot be empty")
+   return false
+  }
+
+  // Filter out empty subtasks
+  let validSubTasks = subTasks.filter { !$0.title.trimmingCharacters(in: .whitespaces).isEmpty }
+
+  // Validate subtasks fit within energy budget
+  guard validateSubTasks(validSubTasks, fitsIn: energyCost) else {
+   let totalEnergy = getTotalSubTasksEnergyCost(validSubTasks)
+   print("Error: Subtasks energy (\(totalEnergy)) exceeds task energy (\(energyCost))")
+   return false
+  }
+
+  // Create and save task
+  let newTask = Task(
+   title: trimmedTitle,
+   createdDate: Date(),
+   isCompleted: false,
+   hasSubtasks: !validSubTasks.isEmpty,
+   taskColor: color,
+   taskSymbol: symbol,
+   energyCost: energyCost,
+   subTasks: validSubTasks
+  )
+
+  addTask(newTask)
+  return true
  }
 }
 

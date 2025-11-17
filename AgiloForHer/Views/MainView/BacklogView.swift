@@ -1,90 +1,62 @@
 import SwiftUI
 
 struct BacklogView: View {
- @State private var selectedFilter = "All"
  @State private var searchText = ""
  @Environment(\.taskManager) var taskManager
 
- let filters = ["All", "High Priority", "Medium", "Low"]
- 
  var body: some View {
-  ZStack {
-    Color.background
-     .ignoresSafeArea()
-    
-    ScrollView {
-     VStack(spacing: 0) {
-      // Filter Pills
-      ScrollView(.horizontal, showsIndicators: false) {
-       HStack(spacing: 12) {
-        ForEach(filters, id: \.self) { filter in
-         FilterPill(
-          title: filter,
-          isSelected: selectedFilter == filter
-         ) {
-          selectedFilter = filter
-         }
-        }
-       }
+  VStack{
+   VStack{
+    HStack {
+     HStack {
+      Text("Backlog")
+       .font(.largeTitle)
+       .fontWeight(.medium)
+       .fontDesign(.serif)
+       .foregroundColor(.blackPrimary)
        .padding(.horizontal)
-       .padding(.vertical, 16)
-      }
-
-      // Backlog Items
-      VStack(spacing: 16) {
-       if taskManager.tasks.isEmpty {
-        VStack(spacing: 12) {
-         Image(systemName: "checkmark.circle")
-          .font(.system(size: 48))
-          .foregroundColor(.textSecondary.opacity(0.5))
-         Text("No tasks yet")
-          .font(.headline)
-          .foregroundColor(.blackPrimary)
-         Text("Add your first task using the To-do tab")
-          .font(.subheadline)
-          .foregroundColor(.textSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 60)
-       } else {
-        ForEach(taskManager.tasks) { task in
-         BacklogTaskItem(task: task, taskManager: taskManager)
-        }
-       }
-      }
-      .padding(.horizontal)
-      .padding(.bottom, 30)
      }
+     
+     Spacer()
     }
    }
-   .navigationTitle("Backlog")
-   .navigationBarTitleDisplayMode(.large)
+   .padding(.bottom, 10)
+   
+   
+   ScrollView {
+    VStack(spacing: 0) {     
+     // Backlog Items
+     VStack(spacing: 16) {
+      if taskManager.tasks.isEmpty {
+       VStack(spacing: 12) {
+        Image(systemName: "checkmark.circle")
+         .font(.system(size: 48))
+         .foregroundColor(.accent.opacity(0.5))
+        Text("No tasks yet")
+         .font(.headline)
+         .foregroundColor(.blackPrimary)
+        Text("Add your first task using the To-do tab")
+         .font(.subheadline)
+         .foregroundColor(.textSecondary)
+       }
+       .frame(maxWidth: .infinity)
+       .fontDesign(.serif)
+       .padding(.top, 120)
+      } else {
+       ForEach(taskManager.tasks) { task in
+        BacklogTaskItem(task: task, taskManager: taskManager)
+       }
+      }
+     }
+     
+     .padding(.horizontal)
+     .padding(.bottom, 30)
+    }
+   }
    .searchable(text: $searchText, prompt: "Search tasks, projects, notes...")
-
- }
-}
-
-// MARK: - Filter Pill
-struct FilterPill: View {
- let title: String
- let isSelected: Bool
- let action: () -> Void
- 
- var body: some View {
-  Button(action: action) {
-   Text(title)
-    .font(.subheadline)
-    .fontWeight(isSelected ? .semibold : .regular)
-    .foregroundColor(isSelected ? .white : .blackPrimary)
-    .padding(.horizontal, 20)
-    .padding(.vertical, 10)
-    .background(isSelected ? Color.primary : Color.white)
-    .cornerRadius(20)
-    .overlay(
-     RoundedRectangle(cornerRadius: 20)
-      .stroke(isSelected ? Color.clear : Color.textSecondary.opacity(0.2), lineWidth: 1)
-    )
   }
+  .background(Color("background"))
+
  }
 }
 
@@ -95,10 +67,10 @@ struct BacklogItem: View {
  let priority: String
  let dueDate: String
  let color: Color
-
+ 
  @State private var isCompleted: Bool = false
  @State private var showConfetti: Bool = false
-
+ 
  var body: some View {
   ZStack {
    VStack(alignment: .leading, spacing: 12) {
@@ -121,38 +93,38 @@ struct BacklogItem: View {
        .foregroundColor(isCompleted ? .myGreen : .textSecondary)
      }
      .buttonStyle(.plain)
-
+     
      Text(title)
       .font(.headline)
       .foregroundColor(.blackPrimary)
       .strikethrough(isCompleted)
       .opacity(isCompleted ? 0.5 : 1.0)
-
+     
      Spacer()
-
+     
      PriorityBadge(priority: priority, color: color)
     }
-
+    
     Text(description)
      .font(.subheadline)
      .foregroundColor(.textSecondary)
      .lineLimit(2)
      .strikethrough(isCompleted)
      .opacity(isCompleted ? 0.5 : 1.0)
-
+    
     HStack {
      HStack(spacing: 6) {
       Image(systemName: "calendar")
        .font(.caption)
        .foregroundColor(.textSecondary)
-
+      
       Text(dueDate)
        .font(.caption)
        .foregroundColor(.textSecondary)
      }
-
+     
      Spacer()
-
+     
      Button(action: {}) {
       Image(systemName: "ellipsis")
        .font(.caption)
@@ -165,7 +137,7 @@ struct BacklogItem: View {
    .cornerRadius(16)
    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
    .opacity(isCompleted ? 0.6 : 1.0)
-
+   
    // Confetti overlay
    if showConfetti {
     ConfettiView()
@@ -179,7 +151,7 @@ struct BacklogTaskItem: View {
  let task: Task
  let taskManager: TaskManager
  @State private var showConfetti: Bool = false
-
+ 
  var body: some View {
   ZStack {
    VStack(alignment: .leading, spacing: 12) {
@@ -199,29 +171,29 @@ struct BacklogTaskItem: View {
        .foregroundColor(task.isCompleted ? .myGreen : .textSecondary)
      }
      .buttonStyle(.plain)
-
+     
      Text(task.title)
       .font(.headline)
       .foregroundColor(.blackPrimary)
       .strikethrough(task.isCompleted)
       .opacity(task.isCompleted ? 0.5 : 1.0)
-
+     
      Spacer()
     }
-
+    
     HStack {
      HStack(spacing: 6) {
       Image(systemName: "calendar")
        .font(.caption)
        .foregroundColor(.textSecondary)
-
+      
       Text(task.createdDate.formatted(date: .abbreviated, time: .omitted))
        .font(.caption)
        .foregroundColor(.textSecondary)
      }
-
+     
      Spacer()
-
+     
      Button(action: {}) {
       Image(systemName: "ellipsis")
        .font(.caption)
@@ -234,7 +206,7 @@ struct BacklogTaskItem: View {
    .cornerRadius(16)
    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
    .opacity(task.isCompleted ? 0.6 : 1.0)
-
+   
    // Confetti overlay
    if showConfetti {
     ConfettiView()
@@ -247,7 +219,7 @@ struct BacklogTaskItem: View {
 struct PriorityBadge: View {
  let priority: String
  let color: Color
-
+ 
  var body: some View {
   Text(priority)
    .font(.caption)

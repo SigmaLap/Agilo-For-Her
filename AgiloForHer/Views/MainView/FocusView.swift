@@ -17,12 +17,17 @@ struct FocusView: View {
     VStack(spacing: 40) {
      // Timer Display
      VStack(spacing: 20) {
-      Text("Focus")
-       .font(.largeTitle.weight(.ultraLight))
-       .foregroundColor(.blackPrimary)
-       .fontDesign(.serif)
-       .padding(.bottom, -32)
-
+      HStack(spacing: 0){
+//       Image("focusImage")
+//        .resizable()
+//        .frame(width: 30, height: 30)
+//        .offset(y: -10)
+       Text("Focus")
+        .font(.largeTitle.weight(.ultraLight))
+        .foregroundColor(.blackPrimary)
+        .fontDesign(.serif)
+        .padding(.bottom, -32)
+      }
 
       // Circular Timer
       ZStack{
@@ -67,6 +72,8 @@ struct FocusView: View {
     ConfettiView()
    }
   }
+  .padding(.horizontal)
+  .background(Color("background"))
  }
 }
 
@@ -122,6 +129,7 @@ struct CircularTimer: View {
       )
       .rotationEffect(.degrees(-90))
       .frame(width: 240, height: 240)
+     
     }
     .gesture(
      DragGesture(minimumDistance: 0)
@@ -181,6 +189,8 @@ struct CircularTimer: View {
   }
   .frame(width: 240, height: 240)
   // ✅ Confetti overlay (no blocking gestures)
+  .background(Color("background"))
+
   .overlay(
    TimelineView(.animation) { timeline in
     let now = timeline.date

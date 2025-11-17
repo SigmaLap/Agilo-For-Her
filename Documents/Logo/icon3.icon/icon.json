@@ -27,10 +27,6 @@
       ],
       "layers" : [
         {
-          "fill" : {
-            "solid" : "display-p3:1.00000,0.51393,0.43015,1.00000"
-          },
-          "glass" : false,
           "image-name" : "ChatGPT Image Nov 17, 2025 at 02_05_04 PM copy.png",
           "name" : "ChatGPT Image Nov 17, 2025 at 02_05_04 PM copy",
           "position" : {

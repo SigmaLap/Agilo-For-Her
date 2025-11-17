@@ -4,58 +4,38 @@ import SwiftData
 struct TaskDetailsView: View {
  @Environment(\.taskManager) var taskManager
  @Environment(\.modelContext) var modelContext
+ @Environment(\.dismiss) private var dismiss
+
  @State private var taskTitle = ""
  @State private var taskColor: String = "purple"
  @State private var taskSymbol: String = "checkmark"
-
- @Binding var isPresented: Bool
- let taskText: String
- @Environment(\.dismiss) private var dismiss
- @State private var subTasks: [SubTask] = []
- @State private var storyPoints: Int = 25
- @State private var showStoryPointsInfo: Bool = false
- @State private var showStoryPointsPicker: Bool = false
- @State private var showMoreOptions: Bool = false
  @State private var showColorSymbolPicker: Bool = false
 
- private let availableColors = ["purple", "orange", "blue", "green", "red", "pink", "cyan", "yellow"]
- private let commonSymbols = ["checkmark", "star.fill", "bolt.fill", "flame.fill", "heart.fill", "sparkles", "target", "gift.fill", "lightbulb.fill", "crown.fill"]
+ @State private var storyPoints: Int = 25
+ @State private var showStoryPointsPicker: Bool = false
+ @State private var showStoryPointsInfo: Bool = false
+ 
+ @State private var subTasks: [SubTask] = []
 
- private func getColorValue(_ colorName: String) -> Color {
-  switch colorName {
-  case "purple": return .myPurple
-  case "orange": return .orange
-  case "blue": return .blue
-  case "green": return .myGreen
-  case "red": return .myRed
-  case "pink": return .pink
-  case "cyan": return .cyan
-  case "yellow": return .yellow
-  default: return .myPurple
-  }
- }
 
- // MARK: - SubTask Helper Methods
+ // MARK: - Computed Properties (using TaskManager)
 
  private var totalSubTaskEnergy: Int {
-  subTasks.reduce(0) { $0 + $1.energyCost }
+  taskManager.getTotalSubTasksEnergyCost(subTasks)
  }
 
  private var remainingEnergy: Int {
-  max(0, storyPoints - totalSubTaskEnergy)
+  taskManager.getRemainingEnergyForSubTasks(taskEnergy: storyPoints, currentSubTasks: subTasks)
  }
 
  private var canAddMoreSubTasks: Bool {
-  remainingEnergy > 0
+  taskManager.canAddSubTask(withEnergy: 5, toTaskWithEnergy: storyPoints, currentSubTasks: subTasks)
  }
 
+ // MARK: - Helper Methods
+
  private func addSubTask() {
-  if canAddMoreSubTasks {
-   let newSubTask = SubTask(
-    title: "",
-    isCompleted: false,
-    energyCost: min(5, remainingEnergy)
-   )
+  if let newSubTask = taskManager.createNewSubTask(forTaskEnergy: storyPoints, currentSubTasks: subTasks) {
    subTasks.append(newSubTask)
   }
  }
@@ -65,21 +45,23 @@ struct TaskDetailsView: View {
  }
 
  private func updateSubTaskEnergy(index: Int, newEnergy: Int) {
-  if index >= 0 && index < subTasks.count {
-   let currentEnergy = subTasks[index].energyCost
-   let difference = newEnergy - currentEnergy
+  guard index >= 0 && index < subTasks.count else { return }
 
-   if difference <= remainingEnergy {
-    subTasks[index].energyCost = newEnergy
-   }
+  let currentEnergy = subTasks[index].energyCost
+  let otherSubTasks = subTasks.enumerated()
+   .filter { $0.offset != index }
+   .map { $0.element }
+
+  if taskManager.canUpdateSubTaskEnergy(
+   currentEnergy: currentEnergy,
+   newEnergy: newEnergy,
+   taskEnergy: storyPoints,
+   otherSubTasks: otherSubTasks
+  ) {
+   subTasks[index].energyCost = newEnergy
   }
  }
 
- private func toggleSubTaskCompletion(index: Int) {
-  if index >= 0 && index < subTasks.count {
-   subTasks[index].isCompleted.toggle()
-  }
- }
 
  // MARK: - Main Body
 
@@ -88,11 +70,7 @@ struct TaskDetailsView: View {
    Form {
     titleSection
     storyPointsSection
-    moreOptionsToggle
-
-    if showMoreOptions {
-     subtasksSection
-    }
+    subtasksSection
    }
    .padding(.top, -25)
    .listSectionSpacing(12)
@@ -100,12 +78,6 @@ struct TaskDetailsView: View {
    .navigationBarBackButtonHidden()
    .navigationBarTitleDisplayMode(.inline)
    .background(Color("background"))
-   .onAppear {
-    if taskTitle.isEmpty && !taskText.isEmpty {
-     taskTitle = taskText
-    }
-    taskManager.modelContext = modelContext
-   }
    .toolbar {
     ToolbarItem(placement: .topBarLeading) {
      Button(role: .cancel) {
@@ -152,7 +124,7 @@ struct TaskDetailsView: View {
     Button(action: { showColorSymbolPicker = true }) {
      ZStack {
       Circle()
-       .fill(getColorValue(taskColor))
+       .fill(taskManager.getColorValue(taskColor))
        .frame(width: 38, height: 38)
 
       Image(systemName: taskSymbol)
@@ -207,14 +179,6 @@ struct TaskDetailsView: View {
   .listRowSeparator(.hidden)
  }
 
- private var moreOptionsToggle: some View {
-  Section {
-   Toggle("More", isOn: $showMoreOptions)
-    .font(.headline)
-    .tint(.accentColor)
-  }
-  .listRowSeparator(.hidden)
- }
 
  private var subtasksSection: some View {
   Section {
@@ -263,26 +227,26 @@ struct TaskDetailsView: View {
     .frame(maxWidth: .infinity)
     .padding(.vertical, 16)
    } else {
-    VStack(spacing: 12) {
+    List {
      ForEach(Array(subTasks.enumerated()), id: \.element.id) { index, subTask in
       subtaskRow(index: index, subTask: subTask)
+       .listRowSeparator(.hidden)
+       .listRowInsets(EdgeInsets())
+       .listRowBackground(Color.clear)
      }
     }
+    .listStyle(.plain)
+    .scrollDisabled(true)
+    .frame(height: CGFloat(subTasks.count) * 70)
    }
   }
  }
 
  private func subtaskRow(index: Int, subTask: SubTask) -> some View {
   HStack(spacing: 12) {
-   Button(action: {
-    withAnimation(.easeInOut(duration: 0.2)) {
-     toggleSubTaskCompletion(index: index)
-    }
-   }) {
-    Image(systemName: subTask.isCompleted ? "checkmark.circle.fill" : "circle")
-     .font(.title3)
-     .foregroundColor(subTask.isCompleted ? .myGreen : .gray)
-   }
+   Image(systemName: "circle")
+    .font(.title3)
+    .foregroundColor(.gray)
 
    VStack(alignment: .leading, spacing: 4) {
     TextField("Sub-task title", text: Binding(
@@ -426,35 +390,27 @@ struct TaskDetailsView: View {
  // MARK: - Save Task Function
 
  private func saveTask() {
-  let trimmedTitle = taskTitle.trimmingCharacters(in: .whitespaces)
-  guard !trimmedTitle.isEmpty else { return }
-
-  let validSubTasks = subTasks.filter { !$0.title.trimmingCharacters(in: .whitespaces).isEmpty }
-
-  let totalSubTaskEnergy = validSubTasks.reduce(0) { $0 + $1.energyCost }
-  guard totalSubTaskEnergy <= storyPoints else {
-   print("Error: Subtasks energy (\(totalSubTaskEnergy)) exceeds task energy (\(storyPoints))")
-   return
-  }
-
-  let newTask = Task(
-   title: trimmedTitle,
-   createdDate: Date(),
-   isCompleted: false,
-   hasSubtasks: !validSubTasks.isEmpty,
-   taskColor: taskColor,
-   taskSymbol: taskSymbol,
+  let success = taskManager.createAndAddTask(
+   title: taskTitle,
+   color: taskColor,
+   symbol: taskSymbol,
    energyCost: storyPoints,
-   subTasks: validSubTasks
+   subTasks: subTasks
   )
 
-  taskManager.addTask(newTask)
-  dismiss()
+  if success {
+   dismiss()
+  }
  }
 }
 
+
+
+
+
+
 #Preview("Default") {
- TaskDetailsView(isPresented: .constant(true), taskText: "Make a cake")
+ TaskDetailsView()
   .environment(\.taskManager, TaskManager())
   .modelContainer(for: [Task.self, SubTask.self, DailyEnergy.self], isAutosaveEnabled: false)
 }

@@ -91,7 +91,7 @@ struct ConfettiView: View {
 
   do {
    audioPlayer = try AVAudioPlayer(contentsOf: url)
-   audioPlayer?.volume = 0.05 // Much quieter - 5% volume
+   audioPlayer?.volume = 0.04 // Much quieter - 5% volume
    audioPlayer?.play()
   } catch {
    print("Error playing sound: \(error.localizedDescription)")
